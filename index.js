@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import GSAP from 'gsap';
 
 // Сцена
 const scene = new THREE.Scene();
@@ -91,7 +92,12 @@ const sphereMaterial = new THREE.MeshPhongMaterial({
 
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 sphere.position.set(2, 0, 1);
-scene.add(sphere);
+
+// scene.add(sphere);
+// sphereOrbit •► порожній об'єкт в центрі (батько), сфера (дитина) буде обертається навколо батька
+const sphereOrbit = new THREE.Object3D();
+scene.add(sphereOrbit);
+sphereOrbit.add(sphere);
 
 //! Тор
 const torus = new THREE.Mesh(
@@ -134,6 +140,45 @@ const plane = new THREE.Mesh(
 plane.position.set(-2, 1, -3);
 scene.add(plane);
 
+// GSAP
+
+GSAP.to(cube.position, {
+  // y: 2,
+  x: 1,
+  z: 1,
+
+  duration: 5,
+  ease: 'power1.inOut',
+  repeat: -1,
+  yoyo: true,
+});
+
+// обертання сфери по колу
+// GSAP.to(sphereOrbit.rotation, {
+//   y: Math.PI * 2, // повний оберт у радіанах, тобто 360°
+//   duration: 6,
+//   ease: 'none',
+//   repeat: -1,
+// });
+
+// обертання сфери по оліпсу
+const orbit = { angle: 0 };
+const radius = 2;
+
+GSAP.to(orbit, {
+  angle: Math.PI * 2,
+  duration: 16,
+  ease: 'none',
+  repeat: -1,
+  onUpdate: () => {
+    sphere.position.x = Math.cos(orbit.angle) * radius;
+    sphere.position.z = Math.sin(orbit.angle) * radius * 2.2;
+    // sphere.position.y = Math.sin(orbit.angle) * radius; // додає нахіл орбіти по Y
+  },
+});
+
+// END GSAP
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -164,7 +209,7 @@ function onMouseClick(event) {
     } else {
       // фарбуємо вперше — спершу зберігаємо оригінал
       object.userData.originalColor = object.material.color.clone();
-      object.material.color.set('blue');
+      object.material.color.set('aqua');
     }
   }
 }
