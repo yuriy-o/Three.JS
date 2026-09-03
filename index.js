@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import GSAP from 'gsap';
+import gsap from 'gsap';
 
 // Сцена
 const scene = new THREE.Scene();
@@ -142,7 +142,7 @@ scene.add(plane);
 
 // GSAP
 
-GSAP.to(cube.position, {
+gsap.to(cube.position, {
   // y: 2,
   x: 1,
   z: 1,
@@ -154,7 +154,7 @@ GSAP.to(cube.position, {
 });
 
 // обертання сфери по колу
-// GSAP.to(sphereOrbit.rotation, {
+// gsap.to(sphereOrbit.rotation, {
 //   y: Math.PI * 2, // повний оберт у радіанах, тобто 360°
 //   duration: 6,
 //   ease: 'none',
@@ -165,7 +165,7 @@ GSAP.to(cube.position, {
 const orbit = { angle: 0 };
 const radius = 2;
 
-GSAP.to(orbit, {
+gsap.to(orbit, {
   angle: Math.PI * 2,
   duration: 16,
   ease: 'none',
@@ -214,7 +214,11 @@ function onMouseClick(event) {
   }
 }
 
-// window.addEventListener('click', onMouseClick);
+function onMouseMove(event) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
 
 let downX = 0;
 let downY = 0;
@@ -231,10 +235,22 @@ window.addEventListener('pointerup', event => {
   if (Math.hypot(dx, dy) < 5) onMouseClick(event);
 });
 
+window.addEventListener('mousemove', onMouseMove);
+
+let isTorusHovered = false;
+
 // Циклічна функція для постійного рендерінгу та анімації
 function animate() {
   requestAnimationFrame(animate);
 
+  rotateShapes();
+  updateHover();
+  controls.update();
+
+  renderer.render(scene, camera);
+}
+
+function rotateShapes() {
   cube.rotation.x += 0.01;
   cube.rotation.y += 0.02;
 
@@ -243,10 +259,27 @@ function animate() {
 
   torus.rotation.x += 0.01;
   torus.rotation.z += 0.05;
+}
 
-  controls.update();
+function updateHover() {
+  raycaster.setFromCamera(mouse, camera);
 
-  renderer.render(scene, camera);
+  const intersects = raycaster.intersectObject(torus);
+
+  if (intersects.length > 0 && !isTorusHovered) {
+    isTorusHovered = true;
+
+    gsap.to(torus.scale, {
+      x: 2,
+      // y: 2,
+      duration: 1.5,
+      ease: 'power1.out',
+    });
+  } else if (intersects.length === 0 && isTorusHovered) {
+    isTorusHovered = false;
+
+    gsap.to(torus.scale, { x: 1, y: 1, duration: 1.5, ease: 'power1.out' });
+  }
 }
 
 animate();
