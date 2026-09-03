@@ -52,6 +52,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
 
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; // включення демпінгу/замедлення
+controls.dampingFactor = 0.01; // значення замедлення
+controls.screenSpacePanning = true; // панорамується в просторі екрана
+controls.maxDistance = 10;
+controls.minDistance = 2;
+
 // Створення фігур
 //! Куб
 const cubeGeometry = new THREE.BoxGeometry(1, 1.3, 1);
@@ -127,6 +134,58 @@ const plane = new THREE.Mesh(
 plane.position.set(-2, 1, -3);
 scene.add(plane);
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// об'єкти, які будуть клікабельні
+const clickableObjects = [cube, sphere, torus, plane];
+
+function onMouseClick(event) {
+  // отримуємо координаті від вікна
+  // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  // mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // але Координати краще брати від canvas
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(clickableObjects, false);
+
+  if (intersects.length > 0) {
+    const object = intersects[0].object;
+
+    if (object.userData.originalColor) {
+      // об'єкт уже пофарбований — повертаємо як було
+      object.material.color.copy(object.userData.originalColor);
+      delete object.userData.originalColor;
+    } else {
+      // фарбуємо вперше — спершу зберігаємо оригінал
+      object.userData.originalColor = object.material.color.clone();
+      object.material.color.set('blue');
+    }
+  }
+}
+
+// window.addEventListener('click', onMouseClick);
+
+let downX = 0;
+let downY = 0;
+
+window.addEventListener('pointerdown', event => {
+  downX = event.clientX;
+  downY = event.clientY;
+});
+
+window.addEventListener('pointerup', event => {
+  const dx = event.clientX - downX;
+  const dy = event.clientY - downY;
+
+  if (Math.hypot(dx, dy) < 5) onMouseClick(event);
+});
+
 // Циклічна функція для постійного рендерінгу та анімації
 function animate() {
   requestAnimationFrame(animate);
@@ -140,10 +199,9 @@ function animate() {
   torus.rotation.x += 0.01;
   torus.rotation.z += 0.05;
 
+  controls.update();
+
   renderer.render(scene, camera);
 }
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
 
 animate();
