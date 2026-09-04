@@ -1,9 +1,17 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gsap from 'gsap';
+// import { GLTFLoader } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'; // кращий шлях, менші навантаження
 
 // Сцена
 const scene = new THREE.Scene();
+
+// Background
+const skyTexture = new THREE.TextureLoader().load('img/sky2.jpg');
+skyTexture.colorSpace = THREE.SRGBColorSpace;
+scene.background = skyTexture;
+skyTexture.mapping = THREE.EquirectangularReflectionMapping;
 
 // Камера
 const camera = new THREE.PerspectiveCamera(
@@ -18,11 +26,13 @@ camera.position.z = 5;
 const axesHelper = new THREE.AxesHelper(3);
 scene.add(axesHelper);
 
+const clock = new THREE.Clock();
+
 // Світло
 //? світло однаково глобально освітлює всі об'єкти в сцені
 //? рівномірна підсвітка звідусіль, щоб тіньові боки не були чорними
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(ambientLight);
+// const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+// scene.add(ambientLight);
 
 //? гола Лампочка // Світло випромінюється з однієї точки в усіх напрямках
 // const pointLight = new THREE.PointLight(0xff0000, 10, 100);
@@ -33,7 +43,7 @@ scene.add(ambientLight);
 // scene.add(pointLightHelper);
 
 //? Імітація сонячного світла, промені паралельні
-const dirLight = new THREE.DirectionalLight('red', 5);
+const dirLight = new THREE.DirectionalLight('white', 5);
 dirLight.position.set(2, 2, 2);
 scene.add(dirLight);
 
@@ -43,7 +53,7 @@ scene.add(dirLight);
 // penumbra — розмитість краю плями, від 0 (різкий обрубаний край) до 1 (м'яке згасання). За замовчуванням 0, і саме через це прожектор часто виглядає «як з мультика».
 // distance — на якій відстані світло згасає до нуля; 0 означає «без обмеження».
 // decay — швидкість згасання, за замовчуванням 2 (фізично коректно, як у реальному житті).
-const spotLight = new THREE.SpotLight('green', 15, 6);
+const spotLight = new THREE.SpotLight('grey', 15, 6);
 spotLight.position.set(1.2, 1.1, 2);
 scene.add(spotLight);
 
@@ -73,7 +83,7 @@ const cubeMaterial = new THREE.MeshStandardMaterial({
 });
 
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-cube.position.set(-1, 0, 0);
+cube.position.set(-3, -2, 1);
 scene.add(cube);
 
 //! Сфера
@@ -129,19 +139,118 @@ const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 0.3);
 scene.add(dirLightHelper);
 
 //! Textures
-const texture = new THREE.TextureLoader().load('img/gray.png');
-const textureMaterial = new THREE.MeshBasicMaterial({ map: texture });
+// const texture = new THREE.TextureLoader().load('img/gray.png');
+// const textureMaterial = new THREE.MeshBasicMaterial({ map: texture });
 
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(3, 3),
-  // new THREE.MeshBasicMaterial({ color: '#2477ca' })
-  textureMaterial
-);
-plane.position.set(-2, 1, -3);
-scene.add(plane);
+// const plane = new THREE.Mesh(
+//   new THREE.PlaneGeometry(3, 3),
+//   // new THREE.MeshBasicMaterial({ color: '#2477ca' })
+//   textureMaterial
+// );
+// plane.position.set(-2, 1, -3);
+// scene.add(plane);
+
+//! Load • 3D Models
+
+const loader = new GLTFLoader();
+
+// Модель знаходиться по вказаних коордінатах
+// loader.load(
+//   '3d_models/a_massive_alien_brute/scene.gltf',
+//   gltf => {
+//     const model = gltf.scene;
+//     model.scale.set(0.5, 0.5, 0.5);
+//     model.position.set(1, 1, 1);
+//     scene.add(model);
+//   },
+//   xhr => {
+//     console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+//   },
+//   error => {
+//     console.log('Error: ' + error);
+//   }
+// );
+
+// Модель прив'язана до Sphere, як до батька
+loader.load('3d_models/a_massive_alien_brute/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(0.2, 0.2, 0.2);
+  model.position.set(0, 0.64, 0); // локальні координати відносно сфери
+
+  sphere.add(model); // замість scene.add(model)
+});
+
+// анімована модель
+let mixer = null;
+
+loader.load('/3d_models/alien_quadpod/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(0.3, 0.3, 0.3);
+  model.position.set(0, -0.37, 0); // локальні координати відносно сфери
+  model.rotation.x = Math.PI;
+
+  sphere.add(model);
+
+  mixer = new THREE.AnimationMixer(model);
+  mixer.clipAction(gltf.animations[0]).play();
+});
+
+loader.load('3d_models/small_alien_3d_model/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(0.4, 0.4, 0.4);
+  model.position.set(0, 1.05, 0);
+
+  cube.add(model);
+});
+
+loader.load('3d_models/fish_mouther/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(60, 60, 60);
+  model.position.set(0, -1.37, 0.1);
+  model.rotation.x = Math.PI;
+
+  cube.add(model);
+});
+
+loader.load('3d_models/green_alien_character/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(0.7, 0.7, 0.7);
+  model.position.set(0, 0.84, 0);
+
+  torus.add(model);
+});
+
+loader.load('3d_models/sun_and_solar_flares/scene.gltf', gltf => {
+  const model = gltf.scene;
+
+  model.scale.set(0.3, 0.3, 0.3);
+
+  const sunHolder = new THREE.Group();
+  sunHolder.rotation.z = THREE.MathUtils.degToRad(7.25);
+  sunHolder.add(model);
+  scene.add(sunHolder);
+
+  const sunLight = new THREE.PointLight(0xffddaa, 100, 10);
+  sunHolder.add(sunLight);
+
+  gsap.to(model.rotation, {
+    y: Math.PI * 2,
+    duration: 20,
+    ease: 'none',
+    repeat: -1,
+  });
+});
+
+// END Load • 3D Models
 
 // GSAP
 
+// Рух Куба по прямій вздовж двох координат
 gsap.to(cube.position, {
   // y: 2,
   x: 1,
@@ -167,12 +276,12 @@ const radius = 2;
 
 gsap.to(orbit, {
   angle: Math.PI * 2,
-  duration: 16,
+  duration: 50,
   ease: 'none',
   repeat: -1,
   onUpdate: () => {
     sphere.position.x = Math.cos(orbit.angle) * radius;
-    sphere.position.z = Math.sin(orbit.angle) * radius * 2.2;
+    sphere.position.z = Math.sin(orbit.angle) * radius * 2;
     // sphere.position.y = Math.sin(orbit.angle) * radius; // додає нахіл орбіти по Y
   },
 });
@@ -183,7 +292,7 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // об'єкти, які будуть клікабельні
-const clickableObjects = [cube, sphere, torus, plane];
+const clickableObjects = [cube, sphere, torus]; // , plane
 
 function onMouseClick(event) {
   // отримуємо координаті від вікна
@@ -247,18 +356,20 @@ function animate() {
   updateHover();
   controls.update();
 
+  if (mixer) mixer.update(clock.getDelta());
+
   renderer.render(scene, camera);
 }
 
 function rotateShapes() {
   cube.rotation.x += 0.01;
-  cube.rotation.y += 0.02;
+  cube.rotation.y += 0.01;
 
-  sphere.rotation.x += 0.05;
-  sphere.rotation.y += 0.01;
+  sphere.rotation.x += 0.005;
+  sphere.rotation.y += 0.005;
 
-  torus.rotation.x += 0.01;
-  torus.rotation.z += 0.05;
+  torus.rotation.x += 0.005;
+  torus.rotation.z += 0.01;
 }
 
 function updateHover() {
