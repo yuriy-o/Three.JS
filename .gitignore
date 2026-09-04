@@ -3,3 +3,7 @@ dist/
 .vite/
 .DS_Store
 *.log
+*.zip
+public/3d_models/
+public/img/sky.jpg
+public/img/sky3.jpg
