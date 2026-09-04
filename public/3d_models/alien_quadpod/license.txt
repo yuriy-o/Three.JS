@@ -1,0 +1,8 @@
+Model Information:
+* title:	Alien Quadpod
+* source:	https://sketchfab.com/3d-models/alien-quadpod-972c52b2f3dc4dd29967a59afe0d212b
+* author:	uday (https://sketchfab.com/udayjeet)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

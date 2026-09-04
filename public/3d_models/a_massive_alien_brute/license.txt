@@ -1,0 +1,8 @@
+Model Information:
+* title:	A Massive Alien Brute
+* source:	https://sketchfab.com/3d-models/a-massive-alien-brute-ac6294f21a9949cdbdb93fe0080e51a7
+* author:	ScyBTC (https://sketchfab.com/ScyBTC)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

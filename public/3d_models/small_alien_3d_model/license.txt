@@ -1,0 +1,8 @@
+Model Information:
+* title:	Small alien 3d model
+* source:	https://sketchfab.com/3d-models/small-alien-3d-model-e3c1f9ff036745e693fa1e734e1aefe2
+* author:	vishnuvardhan (https://sketchfab.com/surampudivishnuvardhan)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
