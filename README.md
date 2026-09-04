@@ -34,6 +34,14 @@
 орбітою через анімацію кута й тригонометрію в `onUpdate`, а тор плавно
 масштабується при наведенні курсора.
 
+### 3D-моделі
+
+![Завантажені GLTF-моделі у сцені](public/img/7_3D_Models.gif)
+
+Моделі у форматі GLTF підвантажуються через `GLTFLoader` і прив'язуються до фігур
+як дочірні об'єкти, тому рухаються разом з ними. Сонце стоїть у центрі координат
+і обертається навколо власної осі, нахиленої на 7.25°.
+
 ## Стек
 
 - **Three.js** `^0.185.1` — рендеринг сцени
@@ -71,6 +79,10 @@
 сфери через `onUpdate` і масштабування тора при наведенні. Рейкастинг виконується
 у кожному кадрі, бо камера й самі об'єкти рухаються постійно.
 
+**3D-моделі** — завантаження GLTF через `GLTFLoader`, прив'язка моделей до фігур
+через ієрархію об'єктів, вимірювання габаритів через `Box3` для точного
+розміщення на поверхні.
+
 **Хелпери** — `AxesHelper`, `DirectionalLightHelper`, `SpotLightHelper`,
 `PointLightHelper` для візуального налагодження.
 
@@ -91,6 +103,28 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## 3D-моделі та ліцензії
+
+Моделі завантажені зі [Sketchfab](https://sketchfab.com/):
+
+| Модель | Автор | Ліцензія |
+|---|---|---|
+| [A Massive Alien Brute](https://sketchfab.com/3d-models/a-massive-alien-brute-ac6294f21a9949cdbdb93fe0080e51a7) | [ScyBTC](https://sketchfab.com/ScyBTC) | Sketchfab Standard |
+| [Alien Quadpod](https://sketchfab.com/3d-models/alien-quadpod-972c52b2f3dc4dd29967a59afe0d212b) | [uday](https://sketchfab.com/udayjeet) | Sketchfab Standard |
+| [Fish mouther](https://sketchfab.com/3d-models/fish-mouther-60004c231e38445b91153abb75a077db) | [Khadka Niyash](https://sketchfab.com/niyash) | CC BY 4.0 |
+| [Green Alien Character](https://sketchfab.com/3d-models/green-alien-character-19d9469531fa419a8a426c1338359477) | [assetfactory](https://sketchfab.com/assetfactory) | Sketchfab Standard |
+| [Small alien 3d model](https://sketchfab.com/3d-models/small-alien-3d-model-e3c1f9ff036745e693fa1e734e1aefe2) | [vishnuvardhan](https://sketchfab.com/surampudivishnuvardhan) | Sketchfab Standard |
+| [Sun and solar flares](https://sketchfab.com/3d-models/sun-and-solar-flares-39953f8a89f84d97905b79887e748536) | [Chaitanya Krishnan](https://sketchfab.com/chaitanyak) | Sketchfab Standard |
+
+Обов'язкове зазначення для моделі під CC BY 4.0:
+
+> This work is based on "Fish mouther"
+> (https://sketchfab.com/3d-models/fish-mouther-60004c231e38445b91153abb75a077db)
+> by Khadka Niyash (https://sketchfab.com/niyash) licensed under CC-BY-4.0
+> (http://creativecommons.org/licenses/by/4.0/)
+
+Повні тексти ліцензій лежать у `license.txt` поряд з кожною моделлю.
 
 ## Структура
 
