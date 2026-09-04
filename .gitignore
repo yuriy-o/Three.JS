@@ -4,6 +4,9 @@ dist/
 .DS_Store
 *.log
 *.zip
-public/3d_models/
+public/3d_models/*
+!public/3d_models/*/
+public/3d_models/*/*
+!public/3d_models/*/license.txt
 public/img/sky.jpg
 public/img/sky3.jpg
