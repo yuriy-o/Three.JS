@@ -1,6 +1,6 @@
 export default {
+  base: '/Three.JS/',
   build: {
-    outDir: 'dist',
-    sourcemap: false
+    outDir: 'dist'
   }
 }
