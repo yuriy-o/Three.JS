@@ -1,5 +1,5 @@
 node_modules/
-dist/
+# dist/
 .vite/
 .DS_Store
 *.log
@@ -8,5 +8,3 @@ public/3d_models/*
 !public/3d_models/*/
 public/3d_models/*/*
 !public/3d_models/*/license.txt
-public/img/sky.jpg
-public/img/sky3.jpg
